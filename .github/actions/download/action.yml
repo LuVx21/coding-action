@@ -57,6 +57,8 @@ runs:
         # 下载到工作区下的独立目录，避免污染根目录
         DOWNLOAD_DIR="${{ github.workspace }}/.downloaded/${{ inputs.fileName }}"
         mkdir -p "$(dirname "$DOWNLOAD_DIR")"
+
+        echo "下载... ${DOWNLOAD_URL} => ${DOWNLOAD_DIR}"
         curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" \
           -o "$DOWNLOAD_DIR" "$DOWNLOAD_URL"
 
@@ -71,6 +73,7 @@ runs:
         SRC="${{ steps.download.outputs.download-path }}"
         DEST="${SRC}.extracted"
 
+        echo "尝试解压... ${SRC} => ${DEST}"
         case "$SRC" in
           *.tar.gz|*.tgz)       mkdir -p "$DEST" && tar -xzf "$SRC" -C "$DEST" ;;
           *.tar.bz2|*.tbz2)     mkdir -p "$DEST" && tar -xjf "$SRC" -C "$DEST" ;;
@@ -78,6 +81,9 @@ runs:
           *.zip)                mkdir -p "$DEST" && unzip -q "$SRC" -d "$DEST" ;;
           *)                    DEST="$SRC" ;;   # 非压缩包，原样使用
         esac
+
+        echo "文件结构:"
+        find ${DEST} -maxdepth 3
 
         echo "extracted-path=$DEST" >> "$GITHUB_OUTPUT"
 
@@ -93,10 +99,8 @@ runs:
         if [ -d "$CANDIDATE" ]; then
           COUNT=$(find "$CANDIDATE" -mindepth 1 -maxdepth 1 | wc -l)
           if [ "$COUNT" -eq 1 ]; then
-            SINGLE=$(find "$CANDIDATE" -mindepth 1 -maxdepth 1 -print -quit)
-            if [ -f "$SINGLE" ]; then
-              CANDIDATE="$SINGLE"
-            fi
+            # cd 一层
+            CANDIDATE=$(find "$CANDIDATE" -mindepth 1 -maxdepth 1 -print -quit)
           fi
         fi
 
