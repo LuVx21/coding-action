@@ -24,4 +24,4 @@ jobs:
 
       - name: 使用下载的文件
         run: |
-          "${{ steps.download-tool.outputs.file-path }}" --version
+          "${{ steps.download-tool.outputs.file-path }}"/upx --version
