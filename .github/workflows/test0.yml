@@ -2,6 +2,18 @@ name: 测试用0
 
 on:
   workflow_dispatch:
+    inputs:
+      repo:
+        description: 仓库名，格式为 owner/repo
+        required: true
+      tag:
+        description: Tag，latest 表示最新 Release
+        required: false
+        default: 'latest'
+      fileName:
+        description: Release 中的文件名，必须精确匹配
+        required: true
+
 
 jobs:
   jobId1:
@@ -15,13 +27,11 @@ jobs:
       - name: 下载工具
         id: download-tool
         uses: ./.github/actions/download
-        env:
-          TAG: 5.3.0
         with:
-          repo: upx/upx
-          tag: v${{ env.TAG }}
-          fileName: upx-${{ env.TAG }}-amd64_linux.tar.xz
+          repo: ${{ inputs.repo }}
+          tag: ${{ inputs.tag }}
+          fileName: ${{ inputs.fileName }}
 
       - name: 使用下载的文件
         run: |
-          "${{ steps.download-tool.outputs.file-path }}"/upx --version
+          find "${{ steps.download-tool.outputs.file-path }}" -maxdepth 5
