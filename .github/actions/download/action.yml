@@ -73,7 +73,6 @@ runs:
         SRC="${{ steps.download.outputs.download-path }}"
         DEST="${SRC}.extracted"
 
-        echo "尝试解压... ${SRC} => ${DEST}"
         case "$SRC" in
           *.tar.gz|*.tgz)       mkdir -p "$DEST" && tar -xzf "$SRC" -C "$DEST" ;;
           *.tar.bz2|*.tbz2)     mkdir -p "$DEST" && tar -xjf "$SRC" -C "$DEST" ;;
@@ -81,6 +80,7 @@ runs:
           *.zip)                mkdir -p "$DEST" && unzip -q "$SRC" -d "$DEST" ;;
           *)                    DEST="$SRC" ;;   # 非压缩包，原样使用
         esac
+        echo "尝试解压... ${SRC} => ${DEST}"
 
         echo "文件结构:"
         find ${DEST} -maxdepth 3
