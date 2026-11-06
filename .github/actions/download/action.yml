@@ -101,6 +101,10 @@ runs:
           if [ "$COUNT" -eq 1 ]; then
             # cd 一层
             CANDIDATE=$(find "$CANDIDATE" -mindepth 1 -maxdepth 1 -print -quit)
+            COUNT=$(find "$CANDIDATE" -mindepth 1 -maxdepth 1 | wc -l)
+            if [ "$COUNT" -eq 1 ]; then
+              CANDIDATE=$(find "$CANDIDATE" -mindepth 1 -maxdepth 1 -print -quit)
+            fi
           fi
         fi
 
