@@ -1,0 +1,27 @@
+name: 测试用0
+
+on:
+  workflow_dispatch:
+
+jobs:
+  jobId1:
+    name: 任务1
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: 下载工具
+        id: download-tool
+        uses: ./.github/actions/download
+        env:
+          TAG: 5.3.0
+        with:
+          repo: upx/upx
+          tag: v${{ env.TAG }}
+          fileName: upx-${{ env.TAG }}-amd64_linux.tar.xz
+
+      - name: 使用下载的文件
+        run: |
+          "${{ steps.download-tool.outputs.file-path }}"/upx --version
